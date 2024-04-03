@@ -105,4 +105,12 @@ sample_dirty_dataset <- data.frame(age, workclass, education, education_num, mar
 
 # Print first few rows of the dataset
 head(sample_dirty_dataset)
+
+```
+
+```{r}
+
+sample_dirty_dataset
+
+
 ```
