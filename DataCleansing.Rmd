@@ -7,6 +7,12 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(dlookr)
+library(editrules)
+library(VIM)
+library(deducorrect)
+library(ISLR) 
 ```
 
 ## Sample data
@@ -108,9 +114,28 @@ head(sample_dirty_dataset)
 
 ```
 
+## Error correction
+### Replacing errors in data set with missing values
+
 ```{r}
 
-sample_dirty_dataset
+sample_dirty_dataset$age = ifelse(sample_dirty_dataset$age == "InvalidAge", NA, sample_dirty_dataset$age)
+
+sample_dirty_dataset$occupation = ifelse(sample_dirty_dataset$occupation == "InvalidOccupation", NA, sample_dirty_dataset$occupation)
+
+sample_dirty_dataset$capital_loss = ifelse(sample_dirty_dataset$capital_loss == -999, NA, sample_dirty_dataset$capital_loss)
+
+sample_dirty_dataset$capital_gain = ifelse(sample_dirty_dataset$capital_gain == -999, NA, sample_dirty_dataset$capital_gain)
+
+sample_dirty_dataset$race = ifelse(sample_dirty_dataset$race == "InvalidRace", NA, sample_dirty_dataset$race)
+
+sample_dirty_dataset$education = ifelse(sample_dirty_dataset$education == "InvalidEducation", NA, sample_dirty_dataset$education)
 
 
 ```
+
+
+
+
+
+
