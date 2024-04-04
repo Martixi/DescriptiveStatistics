@@ -134,6 +134,7 @@ sample_dirty_dataset$education = ifelse(sample_dirty_dataset$education == "Inval
 
 ```
 
+## inconsistencies
 ```{r}
 inconsistencies_education <- sample_dirty_dataset$education %in% c("Bachelors", "11th")
 sample_dirty_dataset$education[sample(1:n, 50)] <- "InvalidEducation"
