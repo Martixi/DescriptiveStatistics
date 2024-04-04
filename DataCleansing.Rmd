@@ -22,7 +22,7 @@ library(dplyr)
 ## Sample data
 
 
-```{r}
+```{r include=FALSE}
 # Load necessary libraries
 library(tidyverse)
 
@@ -162,6 +162,9 @@ race[inconsistencies_race] <- "InvalidRace"
 ### Quick overwiev of missing data
 
 ```{r}
+#missing values before changes
+gg_miss_var(sample_dirty_dataset,  show_pct = TRUE)
+#places with missing data
 vis_miss(sample_dirty_dataset)
 ```
 ### Handling missing numeric data
@@ -216,7 +219,8 @@ vis_miss(sample_dirty_dataset)
 #removing other data - they cannot be imputed
 sample_dirty_dataset <- na.omit(sample_dirty_dataset)
 
-#now there is no missing data
-vis_miss(sample_dirty_dataset)
+#missing values removed
+
+gg_miss_var(sample_dirty_dataset, show_pct = TRUE)
 
 ```
