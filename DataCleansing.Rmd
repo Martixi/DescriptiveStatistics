@@ -159,6 +159,19 @@ sample_dirty_dataset$race[inconsistencies_race] <- "InvalidRace"
 
 ```
 
+
+
+```{r eval=FALSE, include=FALSE}
+
+#first report
+
+sample_dirty_dataset %>%
+  diagnose_web_report(subtitle = "DataSet", output_dir = "C:\\Users\\admin\\OneDrive\\Pulpit", 
+                      output_file = "Diagnosis.html", theme = "blue")
+
+
+```
+
 ## Adressing missing values
 ### Quick overwiev of missing data
 
@@ -224,4 +237,18 @@ sample_dirty_dataset <- na.omit(sample_dirty_dataset)
 
 gg_miss_var(sample_dirty_dataset, show_pct = TRUE)
 
+```
+
+```{r eval=FALSE, include=FALSE}
+sample_dirty_dataset %>%
+  eda_web_report(target = "hours_per_week", subtitle = "EDAReport", 
+                 output_dir = "C:\\Users\\admin\\OneDrive\\Pulpit", output_file = "EDA.html", theme = "blue")
+```
+
+```{r eval=FALSE, include=FALSE}
+#sample_dirty_dataset %>%
+#  transformation_paged_report(target = "hours_per_week", subtitle = "TransformationReport",
+#                              output_dir = "C:\\Users\\admin\\OneDrive\\Pulpit", output_file = "transformation.pdf", 
+#                              theme = "blue")
+#something is wrong it doesn't wanna work
 ```
