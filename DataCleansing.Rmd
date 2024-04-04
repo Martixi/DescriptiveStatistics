@@ -13,6 +13,10 @@ library(editrules)
 library(VIM)
 library(deducorrect)
 library(ISLR) 
+library(naniar)
+library(mice)
+library(ggplot2)
+library(dplyr)
 ```
 
 ## Sample data
@@ -82,17 +86,23 @@ sex[sample(1:n, 50)] <- NA
 # Capital Gain: 0-99999
 capital_gain <- sample(0:99999, n, replace = TRUE)
 
+capital_gain_true <- capital_gain
+
 # Introduce errors in capital_gain column
 capital_gain[sample(1:n, 50)] <- -999
 
 # Capital Loss: 0-99999
 capital_loss <- sample(0:99999, n, replace = TRUE)
 
+capital_loss_true <- capital_loss
+
 # Introduce errors in capital_loss column
 capital_loss[sample(1:n, 50)] <- -999
 
 # Hours per week: 1-99
 hours_per_week <- sample(1:99, n, replace = TRUE)
+
+hours_per_week_true <- hours_per_week
 
 # Introduce missing values in hours_per_week column
 hours_per_week[sample(1:n, 50)] <- NA
@@ -134,7 +144,10 @@ sample_dirty_dataset$education = ifelse(sample_dirty_dataset$education == "Inval
 
 ```
 
-## inconsistencies 
+
+## Handling inconsistencies
+
+
 ```{r}
 inconsistencies_education <- sample_dirty_dataset$education %in% c("Bachelors", "11th")
 sample_dirty_dataset$education[sample(1:n, 50)] <- "InvalidEducation"
@@ -146,7 +159,65 @@ sample_dirty_dataset$race[inconsistencies_race] <- "InvalidRace"
 
 ```
 
+## Adressing missing values
+### Quick overwiev of missing data
 
+```{r}
+vis_miss(sample_dirty_dataset)
+```
+### Handling missing numeric data
 
+```{r}
+# imput missing numeric data
+sample_dirty_dataset <- complete(mice(sample_dirty_dataset, m = 1))
 
+# now there is no missing data in these columns
+vis_miss(sample_dirty_dataset)
 
+# the mean of true data is similar to the mean of imput data
+mean(sample_dirty_dataset$capital_gain)
+mean(capital_gain_true)
+
+mean(sample_dirty_dataset$capital_loss)
+mean(capital_loss_true)
+
+mean(sample_dirty_dataset$hours_per_week)
+mean(hours_per_week_true)
+
+```
+
+### Handling other missing data
+
+```{r}
+# using mutate to adress and change data
+sample_dirty_dataset <- mutate(sample_dirty_dataset, workclass = ifelse(is.na(workclass), "Private", workclass))
+
+sample_dirty_dataset <- mutate(sample_dirty_dataset, relationship = ifelse(is.na(relationship), "Other-realtive", relationship))
+
+sample_dirty_dataset <- mutate(sample_dirty_dataset, occupation = ifelse(is.na(occupation), "Other-service", occupation))
+
+sample_dirty_dataset <- mutate(sample_dirty_dataset, race = ifelse(is.na(race), "Other", race))
+
+# now there is no missing data in these columns
+vis_miss(sample_dirty_dataset)
+
+# using mutate to change data through conclusion
+sample_dirty_dataset <- sample_dirty_dataset %>%
+  mutate(sex = if_else(is.na(sex) & relationship == "Wife", "Male", sex, missing = sex))
+
+sample_dirty_dataset <- sample_dirty_dataset %>%
+  mutate(sex = if_else(is.na(sex) & relationship == "Husband", "Female", sex, missing = sex))
+
+sample_dirty_dataset <- sample_dirty_dataset %>%
+  mutate(sex = if_else(is.na(sex) & marital_status == "Widowed", "Female", sex, missing = sex))
+
+# now there is less mising data in the column
+vis_miss(sample_dirty_dataset)
+
+#removing other data - they cannot be imputed
+sample_dirty_dataset <- na.omit(sample_dirty_dataset)
+
+#now there is no missing data
+vis_miss(sample_dirty_dataset)
+
+```
