@@ -135,15 +135,14 @@ sample_dirty_dataset$education = ifelse(sample_dirty_dataset$education == "Inval
 ```
 
 ```{r}
-inconsistencies_education <- education %in% c("Bachelors", "11th")
+inconsistencies_education <- sample_dirty_dataset$education %in% c("Bachelors", "11th")
+sample_dirty_dataset$education[sample(1:n, 50)] <- "InvalidEducation"
+sample_dirty_dataset$education[inconsistencies_education] <- "InvalidEducation"
 
-education[sample(1:n, 50)] <- "InvalidEducation"
-education[inconsistencies_education] <- "InvalidEducation"
+inconsistencies_race <- sample_dirty_dataset$race %in% c("Other")
+sample_dirty_dataset$race[sample(1:n, 50)] <- "InvalidRace"
+sample_dirty_dataset$race[inconsistencies_race] <- "InvalidRace"
 
-inconsistencies_race <- race %in% c("Other")
-
-race[sample(1:n, 50)] <- "InvalidRace"
-race[inconsistencies_race] <- "InvalidRace"
 ```
 
 
