@@ -46,6 +46,7 @@ library(tinytex)
 library(AER)
 library(ggThemeAssist)
 library(SmarterPoland)
+library(ggforce)
 knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 ```
 
@@ -476,13 +477,47 @@ ggplot(polish_data, aes(IMDb.Score, fill = after_stat(count))) + geom_histogram(
 2. What is the density function of Imdb scores for Polish movies and movie-series?
 
 ```{r ex2_2}
+# Filtering data for Polish movies and series
+polish_content <- mydata %>%
+  filter(grepl("Polish", Tags)) %>%
+  filter(!is.na(IMDb.Score)) %>%
+  filter(!is.na(Series.or.Movie))
 
+# Creating a density plot with facets for Movies and Series
+ggplot(polish_content, aes(x = IMDb.Score)) +
+  geom_density(fill="violet", alpha=0.5) +
+  facet_wrap(~Series.or.Movie) +
+  labs(title="Density plot of IMDb Scores for Polish content on Netflix",
+       x="IMDb Score",
+       y="Density") +
+  theme_minimal()
 ```
 
 3. What are the most popular languages available on Netflix?
 
 ```{r ex2_3}
+# Splitting the Languages column when multiple languages are listed
+mydata <- mydata %>%
+  filter(!is.na(Languages)) %>%
+  separate_rows(Languages, sep = ",\\s*")
 
+# Counting occurrences of each language
+language_counts <- mydata %>%
+  count(Languages, sort = TRUE)
+
+# Selecting top 10 languages
+top_languages <- language_counts %>%
+  top_n(10, n)
+
+# Converting counts into proportions for better visualization
+top_languages$fraction <- top_languages$n / sum(top_languages$n)
+
+# Creating a pie chart for the top 10 languages
+ggplot(top_languages, aes(x="", y=fraction, fill=Languages)) +
+  geom_bar(stat="identity", width=1) +
+  coord_polar(theta="y") +
+  labs(title="Top 10 most popular Languages on Netflix", fill="Language") +
+  theme_void()
 ```
 
 For extra credits:
