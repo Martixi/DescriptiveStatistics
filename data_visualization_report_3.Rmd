@@ -439,6 +439,14 @@ It is an amazingly powerful and flexible package, and it is worth getting acquai
 Using data on credit card applications' status please present the frequency table with the nice, kable format for average monthly credit card expenditures of applicants.
 
 ```{r ex1}
+freq_table <- Freq(CreditCard$expenditure, breaks = seq(0, 3100, by = 100), useNA = "ifany")
+
+colnames(freq_table) <- c("Monthly Expenditure", "Frequency", "Percentage %", "Cumulative frequency", "Cumulative percentage %")
+
+freq_table %>%
+  kable("html") %>%
+  kable_styling(bootstrap_options = "bordered")
+
 
 ```
 
@@ -458,6 +466,10 @@ Answer with the most appropriate data visualization for the following questions:
 1. What is the distribution of Imdb scores for Polish movies and movie-series?
 
 ```{r ex2_1}
+# Filter the data for Polish movies and TV shows
+polish_data <- filter(mydata,grepl(".*Polish*." , Tags))
+
+ggplot(polish_data, aes(IMDb.Score, fill = after_stat(count))) + geom_histogram(binwidth = 0.25)+facet_wrap(vars(Series.or.Movie))
 
 ```
 
