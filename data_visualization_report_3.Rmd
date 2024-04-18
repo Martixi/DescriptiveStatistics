@@ -1,6 +1,6 @@
 ---
 title: "Data Visualization"
-author: "Your Name"
+author: "Martyna Ignaczak, Klaudia Gołubowska, Szymon Adamowicz"
 output:
   html_document: 
     theme: cerulean
@@ -525,6 +525,18 @@ For extra credits:
 *Extra challenge 1.*: Create a chart showing actors starring in the most popular productions.
 
 ```{r challenge1}
+
+actors <- mydata %>% filter(!is.na(Actors) & Actors != "") %>% 
+  separate_rows(Actors, sep = ", ") %>%
+  group_by(Actors) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count)) %>%
+  slice_head(n = 10)
+
+ggplot(actors, aes(x = reorder(Actors, -count), y = count, fill = Actors)) +
+  geom_bar(stat = "identity") + 
+  labs(title = "Most popular actors - Netflix", x = "Actors", y = "number of their films") +
+  theme(axis.text.x = element_text(angle = 90))
 
 ```
 
