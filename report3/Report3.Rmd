@@ -53,15 +53,93 @@ head(CreditCard, 10)
 
 ```
 
+## Format
+A data frame containing 1,319 observations on 12 variables.
+
+card: Factor. Was the application for a credit card accepted?
+
+reports: Number of major derogatory reports.
+
+age: Age in years plus twelfths of a year.
+
+income: Yearly income (in USD 10,000).
+
+share: Ratio of monthly credit card expenditure to yearly income.
+
+expenditure: Average monthly credit card expenditure.
+
+owner: Factor. Does the individual own their home?
+
+selfemp: Factor. Is the individual self-employed?
+
+dependents: Number of dependents.
+
+months: Months living at current address.
+
+majorcards: Number of major credit cards held.
+
+active: Number of active credit accounts.
+
+## Age in relation to succsessful credit aplication
+
+First analysis covers the relevance of age in getting approval for credit.
+my first step will be to round the age to integer form so it is easier to
+group it.
+
 ```{r}
 
 
+# add column of age in integer form
 
+age_analysis <- CreditCard
+age_analysis$int_age <- as.integer(age_analysis$age)
 
+# remove old column of age in double form
+
+age_analysis <- subset(age_analysis, select = c (card, int_age))
+
+# i found some age columns equal 0, it seems like wrong input/ missing data
+# therefore i will get rid of them
+
+age_analysis <- filter(age_analysis, int_age !=0)
+
+age_analysis$age_group = as.character("")
+
+age_analysis$age_group <- case_when(
+  age_analysis$int_age >= 18 & age_analysis$int_age <= 25 ~ "18 - 25",
+  age_analysis$int_age >= 26 & age_analysis$int_age <= 35 ~ "26 - 35",
+  age_analysis$int_age >= 36 & age_analysis$int_age <= 50 ~ "36 - 50",
+  age_analysis$int_age >= 51  ~ "51",
+
+  TRUE ~ NA_character_ 
+)
+
+result <- age_analysis %>%
+  group_by(age_group) %>%
+  summarise(Yes_Count = sum(card == "yes"), No_Count = sum(card == "no"))
+
+# Calculate the percentage of "Yes" statements for each group
+result <- result %>%
+  #group_by(age_group) %>%
+  
+  mutate(Percentage_Yes = (Yes_Count / (Yes_Count+No_Count)) * 100)
+
+# View the result
+print(result)
+
+ggplot(age_analysis, aes(x = age_group, fill = card)) +
+  geom_bar(position = "stack") +
+  labs(title = "Contestants by Age Group and Decision",
+       x = "Age Group",
+       y = "Count") +
+  scale_fill_manual(values = c("yes" = "blue", "no" = "red")) +
+  theme_minimal()
 
 
 
 ```
+
+
 Are the yearly incomes (in USD 10,000), credit card expenditures, age,
 ratio of monthly credit card expenditure to yearly income -
 significantly different for applicants for customers with different
