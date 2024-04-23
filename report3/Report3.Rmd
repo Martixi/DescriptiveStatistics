@@ -118,27 +118,60 @@ result <- age_analysis %>%
   group_by(age_group) %>%
   summarise(Yes_Count = sum(card == "yes"), No_Count = sum(card == "no"))
 
-# Calculate the percentage of "Yes" statements for each group
 result <- result %>%
-  #group_by(age_group) %>%
-  
   mutate(Percentage_Yes = (Yes_Count / (Yes_Count+No_Count)) * 100)
+```
 
-# View the result
-print(result)
+The graph shows us that most of the samples were collected from age group 
+26-35 years. Every age group had more instances of successful credit applications.
+From this data we can assume that age isnt a significant factor in credit aplications.
+
+```{r}
 
 ggplot(age_analysis, aes(x = age_group, fill = card)) +
   geom_bar(position = "stack") +
-  labs(title = "Contestants by Age Group and Decision",
+  labs(title = "Accepted and denied credit cards in different age groups",
        x = "Age Group",
-       y = "Count") +
-  scale_fill_manual(values = c("yes" = "blue", "no" = "red")) +
+       y = "Ammount of applications") +
+  scale_fill_manual(values = c("yes" = "lightgreen", "no" = "red")) +
   theme_minimal()
 
 
 
 ```
+## Yearly income relevance in connection to application for credit
 
+Now we can take a look at yearly income. 
+```{r}
+
+mean_income <- aggregate(income ~ card, data = CreditCard, FUN = mean)
+
+ggplot(CreditCard, aes(x = income, colour = card, fill = card)) +
+  geom_histogram(position = "stack", alpha=0.5, bins = 30, size = 0.75) +
+  geom_vline(data = mean_income, aes(xintercept = income, color = card), linetype = "dashed", size=1) +
+  scale_color_manual(values = c("yes" = "darkblue", "no" = "gold")) +
+  scale_fill_manual(values = c("yes" = "darkblue", "no" = "gold")) +
+  labs(title="Credit applications and their outcomes in relation to income",x = "Income in USD 10.000", y = "Applications") +
+  theme_minimal()
+
+
+```
+
+From the histogram above we can determine that our income data doesn't 
+follow normal distribution.
+
+mean of accepted applications is slightly different from the denied ones
+but the difference isn't really significant. The values mostly cover each
+other and behave almost identically therefore i can't see any significant 
+influence of income size to successful credit card application
+
+## Next topic
+
+opiszcie swoje wykresy zeby bylo to zaliczone jako analiza
+
+```{r}
+
+```
 
 Are the yearly incomes (in USD 10,000), credit card expenditures, age,
 ratio of monthly credit card expenditure to yearly income -
@@ -148,6 +181,6 @@ credit risk ("card" variable - factor)?
 Prepare a professional data visualizations, descriptive statistics'
 tables and interpret them.
 
-```{r my_summary_table}
+```{r}
 # your code here
 ```
