@@ -178,6 +178,23 @@ summary(model)
 ```
 
 
+```{r}
+
+ggplot(CreditCard, aes(x = income, y = expenditure, color = card)) +
+  geom_point() +
+  labs(title = "Relationship between Monthly Credit Card Expenditure and Yearly Income",
+       x = "Yearly Income",
+       y = "Monthly Credit Card Expenditure") +
+  scale_color_manual(values = c("yes" = "lightblue", "no" = "yellow"),
+                     labels = c("Denied", "Accepted")) +
+  theme_minimal()
+
+
+
+```
+From the above plot, we can observe a relationship between expenditures and incomes for applicants, for denied ones expenditures are zero.
+
+
 ## Next topic
 
 opiszcie swoje wykresy zeby bylo to zaliczone jako analiza
