@@ -165,24 +165,9 @@ but the difference isn't really significant. The values mostly cover each
 other and behave almost identically therefore i can't see any significant 
 influence of income size to successful credit card application
 
-```{r}
-CreditCard$income = as.numeric(CreditCard$income)
-CreditCard= na.omit(CreditCard)
-
-CreditCard$binary_outcome <- as.factor(CreditCard$card)
-
-model <- glm(binary_outcome ~ income, data = CreditCard, family = binomial())
-
-summary(model)
-
-```
-
-
 ## Next topic
 
 opiszcie swoje wykresy zeby bylo to zaliczone jako analiza
-
-
 
 ```{r}
 
