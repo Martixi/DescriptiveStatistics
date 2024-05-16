@@ -165,22 +165,74 @@ but the difference isn't really significant. The values mostly cover each
 other and behave almost identically therefore i can't see any significant 
 influence of income size to successful credit card application
 
-## Next topic
-
-opiszcie swoje wykresy zeby bylo to zaliczone jako analiza
+## Ratio of monthly credit card expenditure to yearly income relation to credit
 
 ```{r}
+CreditCard$income = as.numeric(CreditCard$income)
+CreditCard= na.omit(CreditCard)
+
+CreditCard$binary_outcome <- as.factor(CreditCard$card)
+
+model <- glm(binary_outcome ~ income, data = CreditCard, family = binomial())
+
+summary(model)
 
 ```
 
-Are the yearly incomes (in USD 10,000), credit card expenditures, age,
-ratio of monthly credit card expenditure to yearly income -
-significantly different for applicants for customers with different
-credit risk ("card" variable - factor)?
 
-Prepare a professional data visualizations, descriptive statistics'
-tables and interpret them.
+## Average monthly credit card expenditure regarding credit card risk
+
+Now we go on and start analyzing the expenditure.
+First, for better understanding I am calculating the mean of expenditures, when the credit card risk is 'yes' or 'no'.
 
 ```{r}
-# your code here
+# Calculate mean expenditures by card approval status
+mean_expenditures <- CreditCard %>%
+  group_by(card) %>%
+  summarise(Mean_Expenditure = mean(expenditure, na.rm = TRUE))
+
+# Print the table
+knitr::kable(mean_expenditures, caption = "Mean of Monthly Expenditure by Card Approval Status")
 ```
+
+As we can see, when the card risk is 'no', the monthly expenditure is equal 0.
+Then it is clear that the expenditure differs significantly with various credit risk.
+Now I will try to visualize the data, only when credit is 'yes' to see more clearly how this data changes.
+
+```{r}
+# Filter the data to include only approved applications
+approved_expenditures <- CreditCard %>% 
+  filter(card == "yes")
+
+# Plotting the density plot
+ggplot(approved_expenditures, aes(x = expenditure, fill = "pink")) +
+  geom_density(alpha = 0.5) +
+  labs(subtitle = "Distribution of expenditures for approved credit card applications",
+       x = "Monthly Expenditure (USD)",
+       y = "Density") +
+  theme_minimal() +
+  theme(legend.position = "none")  # Hide legend if not needed
+```
+
+We can see that in this case monthly expenditure changes with it's growth.
+The highest density of expenditure is at about 100 USD and then it begins to drop rapidly. Then it is quite rare for the expenditure to be more than 1000 USD a month.
+
+So in this case, the difference in credit risk notably affects how the monthly expenditure changes.
+When credit is 'no' there are no expenditures (they are equal to 0) and when it is 'yes' - expenditures are changing with their prices.
+
+
+```{r}
+
+ggplot(CreditCard, aes(x = income, y = expenditure, color = card)) +
+  geom_point() +
+  labs(title = "Relationship between Monthly Credit Card Expenditure and Yearly Income",
+       x = "Yearly Income",
+       y = "Monthly Credit Card Expenditure") +
+  scale_color_manual(values = c("yes" = "lightblue", "no" = "yellow"),
+                     labels = c("Denied", "Accepted")) +
+  theme_minimal()
+
+
+
+```
+From the above plot, we can observe a relationship between expenditures and incomes for applicants, for denied ones expenditures are zero.
