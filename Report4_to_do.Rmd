@@ -207,8 +207,6 @@ print(phi_coefficient)
  relation but it's not insignificant either. This suggests that females had a higher likelihood of surviving 
 compared to males, but other factors also contribute to survival chances.
 
-
-
 # Let's go on and vizualise the survival rates in terms of age
 ```{r}
 ggplot(cleanStatus, aes(x = Age, fill = Status, color = Status)) +
@@ -221,11 +219,31 @@ ggplot(cleanStatus, aes(x = Age, fill = Status, color = Status)) +
   theme_minimal()
 ```
 
-#correlation estimation
+# And now let's move on to vizualising the survival rates in terms of being a crew member or a passenger
 ```{r}
+ggplot(cleanStatus, aes(x = Status, fill = Crew.or.Passenger.)) +
+  geom_bar(position = "dodge") +
+  geom_text(stat = "count", aes(label = ..count..), position = position_dodge(width = 0.9), vjust = -0.5) +
+  labs(title = "Survival Rate by the Cause of the Excursion",
+       x = "Status",
+       y = "Crew Member or Passenger") +
+  theme_minimal()
+
+```
+# corelation estimation
+```{r}
+
+cleanStatus$Crew.or.Passenger_binary <- ifelse(cleanStatus$Crew.or.Passenger == "Passenger", 1, 0)
+
+status_Crew.or.Passenger <- table(cleanStatus$status_binary, cleanStatus$gender_binary)
+
+phi_coefficient <- cor(cleanStatus$status_binary, cleanStatus$Crew.or.Passenger_binary)
+
+print(phi_coefficient)
 
 
 ```
+A correlation coefficient of 0.15 shows a weak positive relationship, meaning passengers were slightly more likely to survive than crew members on the Titanic. 
 
 #class
 
