@@ -225,6 +225,15 @@ print(phi_coefficient)
  relation but it's not insignificant either. This suggests that females had a higher likelihood of surviving 
 compared to males, but other factors also contribute to survival chances.
 
-```{r}
+# class and survival
 
+```{r}
+ggplot(cleanStatus, aes(x = Class...Department, fill = Status)) +
+  geom_bar(position = "dodge") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  geom_text(stat = "count", aes(label = ..count..), position = position_dodge(width = 0.9), vjust = -0.5) +
+  labs(title = "Survival Rate by class and department of passengers",
+       x = "Status",
+       y = "Count",
+       fill = "Class Department") 
 ```
