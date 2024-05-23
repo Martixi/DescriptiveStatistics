@@ -58,11 +58,10 @@ bank$educ<-as.factor(bank$ed)
 ```
 
 ## Scatterplots
-
-First let's visualize our quantitative relationships using scatterplots. 
+We can add an estimated linear regression line:
 
 ```{r echo=FALSE, warning=TRUE}
-# Basic scatter plot
+# Basic scatter plot with the log of income
 bank$logincome <- log(bank$income)
 ggplot(data = bank, aes(x = age, y = logincome)) +
   geom_point(color = "black", size = 1) +
@@ -71,10 +70,20 @@ ggplot(data = bank, aes(x = age, y = logincome)) +
        x = "Age",
        y = "Income")
 
+
+```
+
+
+```{r echo=FALSE, warning=TRUE}
+
+
 cor(bank$logincome, bank$age)
 pcor.test(bank$logincome, bank$age, bank$employ)
 
 
+```
+
+```{r echo=FALSE, warning=TRUE}
 ggplot(data = bank, aes(x = educ, y = logincome)) +
   geom_boxplot(fill = "lightblue", color = "black", aes(group=ed)) +
   labs(title = "Education & income",
@@ -82,210 +91,13 @@ ggplot(data = bank, aes(x = educ, y = logincome)) +
        y = "Income") +
   theme_minimal() 
 
+
+```
+
+```{r echo=FALSE, warning=TRUE}
+
+
 cor(bank$logincome, bank$ed, method="kendall")
-
-```
-
-You can also normalize the skewed distribution of incomes using log:
-
-```{r echo=FALSE, warning=TRUE}
-# Basic scatter plot with the log of income
-
-
-```
-
-We can add an estimated linear regression line:
-
-```{r echo=FALSE, warning=TRUE}
-
-
-
-
-```
-
-## Scatterplots by groups 
-
-We can finally see if there any differences between risk status:
-
-```{r echo=FALSE, warning=TRUE}
-
-
-
-
-
-```
-
-We can also see more closely if there any differences between those two distributions adding their estimated density plots:
-
-```{r echo=FALSE, warning=TRUE}
-# scatter plot of x and y variables
-# colour by groups
-
-
-
-# Marginal density plot of age (top panel)
-
-
-
-# Marginal density plot of y (right panel)
-
-```
-
-We can also put those plots together:
-
-```{r echo=FALSE, warning=TRUE}
-
-
-
-
-```
-
-## Scatterplots with density curves 
-
-We can also see more closely if there any differences between those two distributions adding their estimated density plots:
-
-```{r echo=FALSE, warning=TRUE}
-
-
-
-```
-
-## Correlation coefficients - Pearson's linear correlation
-
-Ok, let's move to some calculations.
-In R, we can use the cor() function. It takes three arguments and the method: cor(x, y, method)
-For 2 quantitative data, with all assumptions met, we can calculate simple Pearson's coefficient of linear correlation:
-
-```{r echo=FALSE, warning=TRUE}
-
-
-
-```
-
-Ok, what about the percentage of the explained variability?
-
-```{r echo=FALSE, warning=TRUE}
-
-
-
-```
-So as we can see almost ??? of total log of incomes' variability is explained by differences in age. The rest (???) is probably explained by other factors.
-
-## Partial and semipartial correlation 
-
-The partial and semi-partial (also known as part) correlations are used to express the specific portion of variance explained by eliminating the effect of other variables when assessing the correlation between two variables.
-
-Partial correlation holds constant one variable when computing the relations to others. Suppose we want to know the correlation between X and Y holding Z constant for both X and Y. That would be the partial correlation between X and Y controlling for Z. 
-
-Semipartial correlation holds Z constant for either X or Y, but not both, so if we wanted to control X for Z, we could compute the semipartial correlation between X and Y holding Z constant for X.
-
-Suppose we want to know the correlation between the log of income and age controlling for years of employment. How highly correlated are these after controlling for tenure? 
-
-**There can be more than one control variable.
-
-```{r echo=FALSE, warning=FALSE}
-
-
-
-```
-
-How can we interpret the obtained partial correlation coefficient? What is the difference between that one and the semi-partial coefficient:
-
-```{r echo=FALSE, warning=FALSE}
-
-
-
-```
-
-## Rank correlation 
-
-For 2 different scales - like for example this pair of variables: income vs. education levels - we cannot use Pearson's coefficient. The only possibility is to rank also incomes... and lose some more detailed information about them. 
-
-First, let's see boxplots of income by education levels.
-
-```{r echo=FALSE, warning=TRUE}
-
-
-
-
-```
-
-Now, let's see Kendal's coefficient of rank correlation (robust for ties).
-
-```{r echo=FALSE, warning=TRUE}
-
-
-
-```
-
-
-## Point-biserial correlation
-
-Let's try to verify if there is a significant relationship between incomes and risk status. First, let's take a look at the boxplot:
-
-```{r echo=FALSE, warning=TRUE}
-
-
-
-
-```
-
-If you would like to compare 1 quantitative variable (income) and 1 dychotomous variable (default status - binary), then you can use point-biserial coefficient:
-
-```{r echo=FALSE, warning=FALSE}
-
-
-```
-
-
-## Nonlinear correlation - eta coefficient
-
-If you would like to check if there are any nonlinearities between 2 variables, the only possibility (beside transformations and linear analysis) is to calculate "eta" coefficient and compare it with the Pearson's linear coefficient. 
-
-```{r echo=FALSE, warning=FALSE}
-
-
-
-```
-
-## Correlation matrix
-
-We can also prepare the correlation matrix for all quantitative variables stored in our data frame. 
-
-We can use ggcorr() function:
-
-```{r echo=FALSE, warning=TRUE}
-
-
-```
-  
-As you can see - the default correlation matrix is not the best idea for all measurement scales (including binary variable "default"). 
-
-That's why now we can perform our bivariate analysis with ggpair with grouping.
-
-## Correlation matrix with scatterplots 
-
-Here is what we are about to calculate:
-- The correlation matrix between age, log_income, employ, address, debtinc, creddebt, and othdebt variable grouped by whether the person has a default status or not.
-- Plot the distribution of each variable by group
-- Display the scatter plot with the trend by group
-
-```{r echo=FALSE, warning=TRUE}
-
-
-
-
-
-```
-
-
-## Qualitative data
-
-In case of two variables measured on nominal or ordinal&nominal scale - we are forced to organize so called "contingency" table with frequencies and calculate some kind of the correlation coefficient based on them. This is so called "contingency analysis". 
-
-Let's consider one example based on our data: verify, if there is any significant correlation between education level and credit risk.
-
-```{r}
 
 
 ```
@@ -344,8 +156,19 @@ The website http://www.encyclopedia-titanica.org/ offers detailed information ab
 
 8 musicians and 9 employees of the shipyard company are listed as passengers, but travelled with a free ticket, which is why they have NA values in fare. In addition to that, fare is truely missing for a few regular passengers. 
 
+## Analisys
+# 
+
 ```{r}
-# your answer here
+dane2<-titanic
+cleanStatus <- dane2[!dane2$Status == "", ]
+
+ggplot(cleanStatus, aes(x = Status)) +
+  geom_bar() +
+  labs(title = "Survivors and Victims",
+       x = "Status",
+       y = "Count") +
+  theme_minimal()
 ```
 
 
