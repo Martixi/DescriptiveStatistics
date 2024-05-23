@@ -29,7 +29,7 @@ library(gridExtra)
 library(ppcor) # this package computes partial and semipartial correlations.
 library(ltm) # this package computes point-biserial correlations.
 library(devtools) 
-#install_github("markheckmann/ryouready") # please install package "ryouready" from github! (then # it)
+install_github("markheckmann/ryouready") # please install package "ryouready" from github! (then # it)
 library(ryouready) # this package computes nonlinear "eta" correlations.
 library(GGally) # this package computes correlation matrix.
 library(psych) # this package computes qualitative correlations.
@@ -63,10 +63,26 @@ First let's visualize our quantitative relationships using scatterplots.
 
 ```{r echo=FALSE, warning=TRUE}
 # Basic scatter plot
+bank$logincome <- log(bank$income)
+ggplot(data = bank, aes(x = age, y = logincome)) +
+  geom_point(color = "black", size = 1) +
+  geom_smooth(method=lm)+
+  labs(title = "Age & Income",
+       x = "Age",
+       y = "Income")
+
+cor(bank$logincome, bank$age)
+pcor.test(bank$logincome, bank$age, bank$employ)
 
 
-# Change the point size, and shape
+ggplot(data = bank, aes(x = educ, y = logincome)) +
+  geom_boxplot(fill = "lightblue", color = "black", aes(group=ed)) +
+  labs(title = "Education & income",
+       x = "Education",
+       y = "Income") +
+  theme_minimal() 
 
+cor(bank$logincome, bank$ed, method="kendall")
 
 ```
 
