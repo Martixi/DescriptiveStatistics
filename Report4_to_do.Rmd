@@ -50,6 +50,7 @@ It would be nice to add some additional plots in the background. Feel free to ad
 This time we are going to use a typical credit scoring data with predefined "default" variables and personal demografic and income data. Please take a look closer at headers and descriptions of each variable.
 
 ```{r load-data, warning=TRUE, include=FALSE}
+
 download.file("https://github.com/kflisikowski/ds/blob/master/bank_defaults.sav?raw=true", destfile ="bank_defaults.sav",mode="wb")
 bank_defaults <- read_sav("bank_defaults.sav")
 bank<-na.omit(bank_defaults)
@@ -156,7 +157,7 @@ The website http://www.encyclopedia-titanica.org/ offers detailed information ab
 
 8 musicians and 9 employees of the shipyard company are listed as passengers, but travelled with a free ticket, which is why they have NA values in fare. In addition to that, fare is truely missing for a few regular passengers. 
 
-## Analisys
+## Analysis
 # First we clean the empty values in Status column then create a geom bar with general data of survivours and victims
 
 ```{r}
@@ -173,7 +174,7 @@ ggplot(cleanStatus, aes(x = Status)) +
 
 
 ```
-# now lets look at gender in context of survival rates
+# Now lets look at gender in context of survival rates
 ```{r}
 
 ggplot(cleanStatus, aes(x = Status, fill = Gender)) +
@@ -186,6 +187,25 @@ ggplot(cleanStatus, aes(x = Status, fill = Gender)) +
   theme_minimal()
 
 
+```
+# Let's go on and vizualise the survival rates in terms of age
+```{r}
+ggplot(cleanStatus, aes(x = Status, y = Age, fill = Status)) +
+  geom_boxplot() +
+  labs(title = "Age Distribution by Survival Status",
+       x = "Survival Status",
+       y = "Age") +
+  scale_fill_brewer(palette = "Set1", labels = c("Victims", "Survivors")) +
+  theme_minimal()
+
+ggplot(cleanStatus, aes(x = Age, fill = Status, color = Status)) +
+  geom_density(alpha = 0.5) +
+  labs(title = "Density of Age by Survival Status",
+       x = "Age",
+       y = "Density") +
+  scale_fill_brewer(palette = "Set1", labels = c("Victims", "Survivors")) +
+  scale_color_brewer(palette = "Set1") +
+  theme_minimal()
 ```
 
 # corelation estimation
@@ -204,16 +224,7 @@ print(phi_coefficient)
  0.47 result indicates a noticible relation between gender and survival rate. It is not an extremly strong
  relation but it's not insignificant either. This suggests that females had a higher likelihood of surviving 
 compared to males, but other factors also contribute to survival chances.
-# class and survival
 
 ```{r}
-ggplot(cleanStatus, aes(x = Class...Department, fill = Status)) +
-  geom_bar(position = "dodge") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  geom_text(stat = "count", aes(label = ..count..), position = position_dodge(width = 0.9), vjust = -0.5) +
-  labs(title = "Survival Rate by class and department of passengers",
-       x = "Status",
-       y = "Count",
-       fill = "Class Department") 
 
 ```
