@@ -37,112 +37,6 @@ library(DescTools) # this package computes qualitative correlations.
 ```
 
 
-## Introduction
-
-This is our first lab when we are considering 2 dimensions and instead of calculating univariate statistics by groups (or factors) of other variable - we will measure their common relationships based on co-variance and correlation coefficients. 
-
-*Please be very careful when choosing the measure of correlation! In case of different measurument scales we have to recode one of the variables into weaker scale.
-
-It would be nice to add some additional plots in the background. Feel free to add your own sections and use external packages.
-
-## Data
-
-This time we are going to use a typical credit scoring data with predefined "default" variables and personal demografic and income data. Please take a look closer at headers and descriptions of each variable.
-
-```{r load-data, warning=TRUE, include=FALSE}
-
-download.file("https://github.com/kflisikowski/ds/blob/master/bank_defaults.sav?raw=true", destfile ="bank_defaults.sav",mode="wb")
-bank_defaults <- read_sav("bank_defaults.sav")
-bank<-na.omit(bank_defaults)
-bank$def<-as.factor(bank$default)
-bank$educ<-as.factor(bank$ed)
-```
-
-## Scatterplots
-We can add an estimated linear regression line:
-
-```{r echo=FALSE, warning=TRUE}
-# Basic scatter plot with the log of income
-bank$logincome <- log(bank$income)
-ggplot(data = bank, aes(x = age, y = logincome)) +
-  geom_point(color = "black", size = 1) +
-  geom_smooth(method=lm)+
-  labs(title = "Age & Income",
-       x = "Age",
-       y = "Income")
-
-
-```
-
-
-```{r echo=FALSE, warning=TRUE}
-
-
-cor(bank$logincome, bank$age)
-pcor.test(bank$logincome, bank$age, bank$employ)
-
-
-```
-
-```{r echo=FALSE, warning=TRUE}
-ggplot(data = bank, aes(x = educ, y = logincome)) +
-  geom_boxplot(fill = "lightblue", color = "black", aes(group=ed)) +
-  labs(title = "Education & income",
-       x = "Education",
-       y = "Income") +
-  theme_minimal() 
-
-
-```
-
-```{r echo=FALSE, warning=TRUE}
-
-
-cor(bank$logincome, bank$ed, method="kendall")
-
-
-```
-
-
-## Exercise 1. Contingency analysis.
-
-Do you believe in the Afterlife?
-https://nationalpost.com/news/canada/millennials-do-you-believe-in-life-after-life
-A survey was conducted and a random sample of 1091 questionnaires is given in the form of the following contingency table:
-
-```{r echo=FALSE, warning=FALSE}
-x=c(435,147,375,134)
-dim(x)=c(2,2)
-dane<-as.table(x)
-dimnames(dane)=list(Gender=c('Female','Male'),Believe=c('Yes','No'))
-dane
-fourfoldplot(dane)
-```
-
-Our task is to check if there is a significant relationship between the belief in the afterlife and gender. We can perform this procedure with the simple chi-square statistics and chosen qualitative correlation coefficient (two-way 2x2 table).
-
-```{r echo=FALSE, warning=FALSE}
-yes<-c(435,147)
-no<-c(375,134)
-#cohen.kappa(cbind(yes,no))
-chisq.test(dane)
-prop.table(dane)
-```
-
-As you can see we can calculate our chi-square statistic really quickly for two-way tables or larger. 
-Now we can standardize this contingency measure to see if the relationship is significant.
-
-```{r echo=FALSE, warning=FALSE}
-Phi(dane)
-#?ContCoef
-#ContCoef(dane)
-#CramerV(dane)
-#TschuprowT(dane)
-mosaicplot(dane)
-barplot(dane)
-```
-
-
 ## Exercise 2. Contingency analysis for the 'Titanic' data.
 
 Let's consider the titanic dataset which contains a complete list of passengers and crew members on the RMS Titanic. It includes a variable indicating whether a person did survive the sinking of the RMS Titanic on April 15, 1912.
@@ -207,17 +101,7 @@ print(phi_coefficient)
  relation but it's not insignificant either. This suggests that females had a higher likelihood of surviving 
 compared to males, but other factors also contribute to survival chances.
 
-# Let's go on and vizualise the survival rates in terms of age
-```{r}
-ggplot(cleanStatus, aes(x = Age, fill = Status, color = Status)) +
-  geom_density(alpha = 0.5) +
-  labs(title = "Density of Age by Survival Status",
-       x = "Age",
-       y = "Density") +
-  scale_fill_brewer(palette = "Set1", labels = c("Victims", "Survivors")) +
-  scale_color_brewer(palette = "Set1") +
-  theme_minimal()
-```
+
 
 # And now let's move on to vizualising the survival rates in terms of being a crew member or a passenger
 ```{r}
@@ -245,7 +129,7 @@ print(phi_coefficient)
 ```
 A correlation coefficient of 0.15 shows a weak positive relationship, meaning passengers were slightly more likely to survive than crew members on the Titanic. 
 
-#class
+# Survival based on class
 
 ```{r}
 ggplot(cleanStatus, aes(x = Class...Department, fill = Status)) +
@@ -257,3 +141,31 @@ ggplot(cleanStatus, aes(x = Class...Department, fill = Status)) +
        y = "Count",
        fill = "Class Department") 
 ```
+
+ we single out only passengers of ship
+ 
+```{r}
+
+onlyPassengers <- cleanStatus[!cleanStatus$Crew.or.Passenger. == "Crew", ]
+
+ggplot(onlyPassengers, aes(x = Class...Department, fill = Status)) +
+  geom_bar(position = "dodge") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  geom_text(stat = "count", aes(label = ..count..), position = position_dodge(width = 0.9), vjust = -0.5) +
+  labs(title = "Survival Rate by class and department of passengers",
+       x = "Status",
+       y = "Count",
+       fill = "Class Department") 
+
+
+```
+
+```{r}
+
+
+
+
+
+```
+
+
